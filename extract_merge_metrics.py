@@ -45,6 +45,11 @@ def get_diff_stat(git: Git, old_comit: Commit, new_commit: Commit) -> Diff:
     diff = git.diff(old_comit, new_commit, "--numstat").split(linesep)
     if not diff[0]:
         diff = []
+    diff = filter(lambda line: not line.lower().endswith(".sql"), diff)
+    diff = filter(lambda line: not line.lower().endswith(".conf"), diff)
+    diff = filter(lambda line: not line.lower().endswith(".log"), diff)
+    # diff = filter(lambda line: not line.lower().endswith(".json"), diff)
+    # diff = filter(lambda line: not line.lower().endswith("results.html"), diff)
     diff = map(Diff.from_line, diff)
     return sum(diff, Diff.ZERO)
 
