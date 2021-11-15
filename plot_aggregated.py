@@ -13,7 +13,7 @@ def function(freq, y_axis, start_date, count=True, cummulative=False):
         df = pd.read_csv("%s.csv" % project)
         df.index = pd.to_datetime(df["timestamp"], unit="s", utc=True).dt.tz_convert("Asia/Tehran")
         df["lines"] = df["added_lines"] + df["removed_lines"]
-        df = df[["lines"]].resample(freq)
+        df = df[["lines"]].resample(freq, origin=pd.to_datetime(start_date+"-01", utc=True).tz_convert("Asia/Tehran"))
         if count:
             df = df.count()
         else:
@@ -27,7 +27,7 @@ def function(freq, y_axis, start_date, count=True, cummulative=False):
     for project in projects[1:]:
         merged = merged.merge(dfs[project], left_index=True, right_index=True, how="outer")
     merged = merged.fillna(0).astype(int)
-    # print(merged)
+    # print(merged.tail(50))
 
     if cummulative:
         for i in range(1, len(projects)):
